@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -8,11 +8,8 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    fetchMovieHandler();
-  }, []);
 
-  const fetchMovieHandler = async () => {
+  const fetchMovieHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -36,7 +33,7 @@ function App() {
       setError(error.message);
       setIsLoading(false);
     }
-  };
+  }, []);
   const addMovieHandler = async (movie) => {
     const response = await fetch(
       "https://react-moive-app-45222-default-rtdb.europe-west1.firebasedatabase.app/movies.json",
@@ -51,6 +48,10 @@ function App() {
     const data = await response.json();
     console.log(data);
   };
+  useEffect(() => {
+    fetchMovieHandler();
+  }, [fetchMovieHandler]);
+
   let content = <p>There is no Movie</p>;
 
   if (error) {
